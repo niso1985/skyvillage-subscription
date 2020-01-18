@@ -9,3 +9,8 @@ case class StripeInfo(
 object StripeInfo {
   implicit val jw = Json.writes[StripeInfo]
 }
+
+case class Session(sessionId: String)
+object Session {
+  implicit val jw = Json.writes[Session]
+}
