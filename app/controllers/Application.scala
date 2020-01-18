@@ -1,15 +1,17 @@
 package controllers
 
-import play.api._
+import com.stripe.Stripe
 import play.api.mvc._
-import play.api.cache.Cache
-import play.api.Play.current
 
-import play.api.db._
 
 object Application extends Controller {
 
+
+  Stripe.apiKey = "sk_test_NdLJjjEOj59wG3YueEeohJ0y00ipviQfOy"
+
   def setup = Action{
+
+
     Ok("setup test")
   }
 }

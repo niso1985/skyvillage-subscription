@@ -1,4 +1,4 @@
-name := """play-getting-started"""
+name := """skyvillage-subscription"""
 
 version := "1.0-SNAPSHOT"
 
@@ -9,7 +9,8 @@ scalaVersion := "2.11.7"
 libraryDependencies ++= Seq(
   jdbc,
   cache,
-  "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
+  "com.stripe" % "stripe-java" % "10.0.2",
+  "com.typesafe" % "config" % "1.4.0",
   ws
 )
 
