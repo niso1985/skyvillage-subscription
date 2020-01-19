@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>メンバーシップ購入</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script defer src="./script.js"></script>
+</head>
+
+<body>
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered is-multiline has-text-black has-text-centered">
+            <div class="column is-two-fifths">
+                <figure class="image">
+                    <img src="img/SkyVillage_logo.png">
+                </figure>
+                <p class="is-size-4 has-text-weight-bold">
+                    SKY VILLAGE メンバーシップ
+                </p>
+                <p class="is-size-4">
+                    ¥2,000/月
+                </p>
+
+                <p class="content">参加希望VILLAGEを記入して、<br/>下記加入するボタンを押し、<br/>決済登録を行ってください。<br/>
+                    課金は毎月1日に行われます。
+                </p>
+                <input id="village-input" class="content input" type="text" placeholder="参加希望VILLAGE">
+
+                <button
+                        style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+                        id="checkout-button" role="link">
+                    加入する
+                </button>
+
+                <div id="error-message"></div>
+
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+
+</html>

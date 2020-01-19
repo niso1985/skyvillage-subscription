@@ -14,3 +14,8 @@ case class Session(sessionId: String)
 object Session {
   implicit val jw = Json.writes[Session]
 }
+
+case class Village(village: String)
+object Village {
+  implicit val jr = Json.reads[Village]
+}
