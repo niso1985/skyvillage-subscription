@@ -1,12 +1,14 @@
 // Create a Checkout Session with the selected plan ID
-var createCheckoutSession = function(param) {
+var createCheckoutSession = function(name_, email_, village_) {
   return fetch("/create-checkout-session", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      village: param
+      name: name_,
+      email: email_,
+      village: village_
     })
   }).then(handleResult);
 };
@@ -34,9 +36,10 @@ fetch("/setup")
     document
       .getElementById("checkout-button")
       .addEventListener("click", function(evt) {
+        var name = document.getElementById("name-input").value
+        var email = document.getElementById("email-input").value
         var village = document.getElementById("village-input").value
-        console.log(village)
-        createCheckoutSession(village).then(function(data) {
+        createCheckoutSession(name, email, village).then(function(data) {
           // Call Stripe.js method to redirect to the new Checkout page
           stripe
             .redirectToCheckout({

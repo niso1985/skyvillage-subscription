@@ -15,9 +15,9 @@ object Session {
   implicit val jw = Json.writes[Session]
 }
 
-case class Village(village: String)
-object Village {
-  implicit val jr = Json.reads[Village]
+case class CustomerInfo(name: String, email: String, village: String)
+object CustomerInfo {
+  implicit val jr = Json.reads[CustomerInfo]
 }
 
 case class ErrorResponse(msg: String)
