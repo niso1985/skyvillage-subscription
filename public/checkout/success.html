@@ -23,6 +23,17 @@
         </div>
     </div>
 </section>
+<!--<script>
+      var urlParams = new URLSearchParams(window.location.search);
+      var sessionId = urlParams.get("session_id")
+      if (sessionId) {
+        fetch("/update-customer-meta?sessionId=" + sessionId).then(function(result){
+          return result.json()
+        }).catch(function(err){
+          console.log('Error when fetching Checkout session', err);
+        });
+      }
+</script>-->
 </body>
 
 </html>

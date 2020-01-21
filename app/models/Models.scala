@@ -19,3 +19,8 @@ case class Village(village: String)
 object Village {
   implicit val jr = Json.reads[Village]
 }
+
+case class ErrorResponse(msg: String)
+object ErrorResponse {
+  implicit val jw = Json.writes[ErrorResponse]
+}
