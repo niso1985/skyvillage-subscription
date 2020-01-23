@@ -11,6 +11,8 @@ import models.{ CustomerInfo, ErrorResponse, StripeInfo }
 import play.Logger
 import play.api.libs.json.{ JsError, JsSuccess, Json }
 import play.api.mvc._
+import java.time.{ LocalDate, LocalDateTime, ZoneId, ZoneOffset }
+import java.time.temporal.TemporalAdjusters
 
 import scala.util.control.Exception._
 import scala.util.{ Failure, Success }
@@ -55,8 +57,10 @@ object Application extends Controller {
             val planBuild = new SubscriptionData.Item.Builder()
               .setPlan(plan)
               .build
+            val localMonthBeginning = LocalDate.now().atStartOfDay().plusMonths(1L).`with`(TemporalAdjusters.firstDayOfMonth)
             val subscriptionData = new SubscriptionData.Builder()
               .addItem(planBuild)
+              .setTrialEnd(localMonthBeginning.toEpochSecond(ZoneOffset.ofHours(9)))
               .build
             builder.setSubscriptionData(subscriptionData)
 
