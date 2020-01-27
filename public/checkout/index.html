@@ -14,40 +14,112 @@
 <body>
 <section class="section">
     <div class="container">
-        <div class="columns is-centered is-multiline has-text-black has-text-centered">
-            <div class="column is-two-fifths">
-                <figure class="image">
-                    <img src="img/SkyVillage_logo.png">
-                </figure>
-                <p class="is-size-4 has-text-weight-bold">
-                    SKY VILLAGE メンバーシップ
-                </p>
-                <p class="is-size-4">
-                    ¥2,000/月
-                </p>
+        <div class="columns is-mobile is-multiline has-text-black">
+            <div class="column">
+                <div class="columns is-multiline is-centered has-text-centered">
+                    <div class="column is-two-fifth">
+                        <figure class="image">
+                            <img src="img/SkyVillage_logo.png">
+                        </figure>
+                        <p class="is-size-4 has-text-weight-bold">
+                            SKY VILLAGE メンバーシップ
+                        </p>
+                    </div>
+                </div>
+                <div class="columns is-multiline is-centered">
+                    <div class="column is-half">
+                        <p class="content">下記項目を記入して、希望のメンバーシップのボタンを押し、決済登録を行ってください。課金は毎月1日に行われます。
+                        </p>
+                    </div>
+                </div>
+                <div class="columns is-multiline is-centered">
+                    <div class="column is-half">
+                        <p class="content">
+                            名前 <input id="name-input" class="input" type="text" placeholder="名前">
+                        </p>
+                    </div>
+                </div>
+                <div class="columns is-multiline is-centered">
+                    <div class="column is-half">
+                        <p class="content">
+                            メールアドレス <input id="email-input" class="input" type="text" placeholder="メールアドレス">
+                        </p>
+                    </div>
+                </div>
+                <div class="columns is-multiline is-centered">
+                    <div class="column is-half">
+                        <p class="content">
+                            参加希望VILLAGE <input id="village-input" class="input" type="text" placeholder="参加希望VILLAGE">
+                        </p>
+                    </div>
+                </div>
 
-                <p class="content">下記項目を記入して、<br/>加入するボタンを押し、<br/>決済登録を行ってください。<br/>
-                    課金は毎月1日に行われます。
-                </p>
-                <p class="content">
-                    名前 <input id="name-input" class="input" type="text" placeholder="名前">
-                </p>
-                <p class="content">
-                    メールアドレス <input id="email-input" class="input" type="text" placeholder="メールアドレス">
-                </p>
-                <p class="content">
-                    参加希望VILLAGE <input id="village-input" class="input" type="text" placeholder="参加希望VILLAGE">
-                </p>
+                <div class="columns is-multiline is-centered">
+                    <div class="column is-half">
+                        <div class="box">
+                            <p class="is-size-5 has-text-weight-bold">VILLAGEコース<br/>
+                                &lt;スタンダードコース&gt;
+                            </p>
+                            <p class="has-text-weight-bold">特典</p>
+                            <div class="content">
+                                <ul>
+                                    <li>完全招待制SKYVILLAGEへの参加</li>
+                                    <li>VILLAGE＝企画の立ち上げサポート</li>
+                                    <li>VILLAGEメンバー限定のイベントへのご招待</li>
+                                    <li>月に1度の企画ブラシュアップ会への参加</li>
+                                    <li>代表龍馬のSKYVILLAGEメンバー限定のVLOGの閲覧権を付与</li>
+                                    <li>代表龍馬の有料メルマガの無料先行閲覧権を付与</li>
+                                </ul>
+                            </div>
 
-                <button
-                        style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
-                        id="checkout-button" role="link">
-                    加入する
-                </button>
+                            <div class="columns is-multiline has-text-centered">
+                                <div class="column">
+                                    <button
+                                            style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+                                            id="checkout-button-1" role="link">
+                                        月額2000円でVILLAGEコースに加入する
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns is-multiline is-centered">
+                    <div class="column is-half">
+                        <div class="box">
+                            <p class="is-size-5 has-text-weight-bold">TOPコース<br/>
+                                &lt;アドバンスコース&gt;
+                            </p>
+                            <p class="has-text-weight-bold">特典</p>
+                            <div class="content is-left">
+                                <ul>
+                                    <li>スタンダードコースの全サービスを利用可能</li>
+                                    <li>代表との2週間に1度の打ち合わせ</li>
+                                    <li>SKYVILLAGE公式企画としてSKYVILLAGE内で、運営から直接情報を拡散</li>
+                                    <li>インフルエンサーの獲得の優先サポート</li>
+                                    <li>24時間運営メンバーとオフラインでの企画ブラシュアップや質疑応答サービスの利用</li>
+                                    <li>個人的に企画を更にスピード感を持って形にしたい方向けのコースです</li>
+                                </ul>
+                            </div>
+
+                            <div class="columns is-multiline has-text-centered">
+                                <div class="column">
+
+                                    <button
+                                            style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+                                            id="checkout-button-2" role="link">
+                                        月額5000円でTOPコースに加入する
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
 
                 <div id="error-message"></div>
-
             </div>
+
         </div>
     </div>
 </section>
