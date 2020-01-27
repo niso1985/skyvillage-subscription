@@ -20,13 +20,14 @@ import scala.util.{ Failure, Success }
 object Application extends Controller {
   val config: Config = ConfigFactory.load()
   val pubkey = config.getString("stripe.pubkey")
-  val plan = config.getString("stripe.planid")
+  val plan1 = config.getString("stripe.plan1")
+  val plan2 = config.getString("stripe.plan2")
   val baseUrl = config.getString("baseurl")
 
   Stripe.apiKey = config.getString("stripe.secretkey")
 
   def setup = Action {
-    val info = StripeInfo(pubkey, plan)
+    val info = StripeInfo(pubkey, plan1, plan2)
     Ok(Json.toJson(info))
   }
 
@@ -55,7 +56,7 @@ object Application extends Controller {
               .setCustomer(customer.getId)
 
             val planBuild = new SubscriptionData.Item.Builder()
-              .setPlan(plan)
+              .setPlan(customerInfo.plan)
               .build
             val localMonthBeginning = LocalDate.now().atStartOfDay().plusMonths(1L).`with`(TemporalAdjusters.firstDayOfMonth)
             val subscriptionData = new SubscriptionData.Builder()
