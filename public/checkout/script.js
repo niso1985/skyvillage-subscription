@@ -17,12 +17,26 @@ var createCheckoutSession = function(name_, email_, village_, plan_) {
 // Handle any errors returned from Checkout
 var handleResult = function(result) {
   if (result.error) {
-    var displayError = document.getElementById("error-message");
-    displayError.textContent = "エラーが発生しました: " + result.error.message;
+    alert("エラーが発生しました: " + result.error.message);
   } else {
     return result.json();
   }
 };
+
+/* get villages */
+fetch("https://script.google.com/macros/s/AKfycbyhGrl64tZqKdzQV2sINJUlloeCmaZt9KKD-QsCg_sRUXZrnQg/exec?action=villages")
+  .then(function(result) {
+    return result.json();
+  })
+  .then(function(json) {
+    var select = document.getElementById('villages');
+    json.villages.map(function(v) {
+        var option = document.createElement('option');
+        option.value = v;
+        option.appendChild(document.createTextNode(v));
+        select.appendChild(option);
+    });
+  });
 
 /* Get your Stripe publishable key to initialize Stripe.js */
 fetch("/setup")
@@ -41,7 +55,7 @@ fetch("/setup")
       .addEventListener("click", function(evt) {
         var name = document.getElementById("name-input").value
         var email = document.getElementById("email-input").value
-        var village = document.getElementById("village-input").value
+        var village = document.getElementById("village").value
         createCheckoutSession(name, email, village, plan1).then(function(data) {
           // Call Stripe.js method to redirect to the new Checkout page
           stripe
@@ -57,7 +71,7 @@ fetch("/setup")
       .addEventListener("click", function(evt) {
         var name = document.getElementById("name-input").value
         var email = document.getElementById("email-input").value
-        var village = document.getElementById("village-input").value
+        var village = document.getElementById("village").value
         createCheckoutSession(name, email, village, plan2).then(function(data) {
           // Call Stripe.js method to redirect to the new Checkout page
           stripe
