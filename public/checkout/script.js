@@ -23,6 +23,14 @@ var handleResult = function(result) {
   }
 };
 
+function checkEmailAddress(str){
+    if(str.match(/.+@.+\..+/) == null){
+        return false;
+    }else{
+        return true;
+    }
+}
+
 /* get villages */
 fetch("https://script.google.com/macros/s/AKfycbyhGrl64tZqKdzQV2sINJUlloeCmaZt9KKD-QsCg_sRUXZrnQg/exec?action=villages")
   .then(function(result) {
@@ -54,8 +62,24 @@ fetch("/setup")
       .getElementById("checkout-button-1")
       .addEventListener("click", function(evt) {
         var name = document.getElementById("name-input").value
+        if (name == undefined || name == "") {
+            alert("名前を入力してください。");
+            return;
+        }
         var email = document.getElementById("email-input").value
-        var village = document.getElementById("village").value
+        if (email == undefined || email == "") {
+            alert("メールアドレスを入力してください。");
+            return;
+        }
+        if (!checkEmailAddress(email)) {
+            alert("正しいメールアドレスを入力してください。")
+            return;
+        }
+        var village = document.getElementById("villages").value
+        if (village == undefined || village == "VILLAGEを選択してください") {
+            alert("VILLAGEを選択してください。");
+            return;
+        }
         createCheckoutSession(name, email, village, plan1).then(function(data) {
           // Call Stripe.js method to redirect to the new Checkout page
           stripe
@@ -70,8 +94,24 @@ fetch("/setup")
       .getElementById("checkout-button-2")
       .addEventListener("click", function(evt) {
         var name = document.getElementById("name-input").value
+        if (name == undefined || name == "") {
+            alert("名前を入力してください。");
+            return;
+        }
         var email = document.getElementById("email-input").value
-        var village = document.getElementById("village").value
+        if (email == undefined || email == "") {
+            alert("メールアドレスを入力してください。");
+            return;
+        }
+        if (!checkEmailAddress(email)) {
+            alert("正しいメールアドレスを入力してください。")
+            return;
+        }
+        var village = document.getElementById("villages").value
+        if (village == undefined || village == "VILLAGEを選択してください") {
+            alert("VILLAGEを選択してください。");
+            return;
+        }
         createCheckoutSession(name, email, village, plan2).then(function(data) {
           // Call Stripe.js method to redirect to the new Checkout page
           stripe
