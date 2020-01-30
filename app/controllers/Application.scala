@@ -58,10 +58,8 @@ object Application extends Controller {
             val planBuild = new SubscriptionData.Item.Builder()
               .setPlan(customerInfo.plan)
               .build
-            val localMonthBeginning = LocalDate.now().atStartOfDay().plusMonths(1L).`with`(TemporalAdjusters.firstDayOfMonth)
             val subscriptionData = new SubscriptionData.Builder()
               .addItem(planBuild)
-              .setTrialEnd(localMonthBeginning.toEpochSecond(ZoneOffset.ofHours(9)))
               .build
             builder.setSubscriptionData(subscriptionData)
 
