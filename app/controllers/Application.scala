@@ -14,11 +14,14 @@ import play.api.libs.json.{ JsError, JsSuccess, Json }
 import play.api.mvc._
 import javax.inject.Inject
 import play.api.db.slick.DatabaseConfigProvider
+import slick.dbio.DBIOAction
 import slick.jdbc.JdbcProfile
 
 import scala.util.control.Exception._
 import scala.util.{ Failure, Success }
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.control.NonFatal
 
 class Application @Inject() (cc: ControllerComponents, dp: DatabaseConfigProvider) extends AbstractController(cc) {
   val config: Config = ConfigFactory.load()
@@ -36,60 +39,78 @@ class Application @Inject() (cc: ControllerComponents, dp: DatabaseConfigProvide
     Ok(Json.toJson(info))
   }
 
-  def createCheckoutSession = Action { implicit request: Request[AnyContent] ⇒
-    Logger.info(s"[createCheckoutSession] start")
-    allCatch withTry (request.body.asJson.map(_.validate[CustomerInfo]) match {
-      case None ⇒ throw new IllegalArgumentException("Need request body.")
-      case Some(json) ⇒
-        Logger.info(s"[createCheckoutSession] received json: ${json.toString}")
-        json match {
-          case e @ JsError(_) ⇒ throw new IllegalArgumentException(s"Json Parse error. ${e.toString}")
-          case JsSuccess(customerInfo, _) ⇒
-            def retrieve: Customer = {
-              ???
-            }
-            def make: Customer = {
-              ???
-            }
-            Logger.info(s"[createCheckoutSession] received param: $customerInfo")
-            // ここで、メールアドレスでチェックして、存在していたらstripe_idからretrieveする
-            val a = dbConfig.db.run(CustomerDAO.findByEmail(customerInfo.email)).map { row ⇒
-              if (row.isDefined) retrieve
-              else make
-            }
-
-            val cbuilder = new CustomerCreateParams.Builder
-            val cparam = cbuilder.setName(customerInfo.name)
-              .setDescription(s"参加希望VILLAGE: ${customerInfo.village}")
-              .setEmail(customerInfo.email)
-              .build()
-            val customer = Customer.create(cparam)
-            Logger.info(s"[createCheckoutSession] created customer: $customer")
-
-            val builder = new SessionCreateParams.Builder
-            builder.setSuccessUrl(s"$baseUrl/assets/checkout/success.html")
-              .setCancelUrl(s"$baseUrl/assets/checkout/canceled.html")
-              .addPaymentMethodType(PaymentMethodType.CARD)
-              .setCustomer(customer.getId)
-
-            val planBuild = new SubscriptionData.Item.Builder()
-              .setPlan(customerInfo.plan)
-              .build
-            val subscriptionData = new SubscriptionData.Builder()
-              .addItem(planBuild)
-              .build
-            builder.setSubscriptionData(subscriptionData)
-
-            val createParams = builder.build
-            val session = Session.create(createParams)
-            Logger.info(s"[createCheckoutSession] created session: $session")
-            Ok(Json.toJson(models.Session(session.getId)))
-        }
-    }) match {
-      case Success(r) ⇒ r
-      case Failure(ex) ⇒
-        Logger.error(ex.getLocalizedMessage)
-        BadRequest(Json.toJson(ErrorResponse(ex.getLocalizedMessage)))
+  def createCheckoutSession = Action.async { implicit request: Request[AnyContent] ⇒
+    import CustomerDAO.JdbcProfile.api._
+    def retrieve(row: CustomerDAO.Row): DBIO[Customer] = {
+      val c = Customer.retrieve(row.stripeId)
+      Logger.info(s"[createCheckoutSession] retrieve customer: $c")
+      DBIO.successful(c)
     }
+    def make(customerInfo: CustomerInfo): DBIO[Customer] = {
+      val cbuilder = new CustomerCreateParams.Builder
+      val cparam = cbuilder.setName(customerInfo.name)
+        .setDescription(s"参加希望VILLAGE: ${customerInfo.village}")
+        .setEmail(customerInfo.email)
+        .build()
+      val c = Customer.create(cparam)
+      Logger.info(s"[createCheckoutSession] created customer: $c")
+      (CustomerDAO += CustomerDAO.Row(
+        email = customerInfo.email,
+        stripeId = c.getId,
+        userName = customerInfo.name
+      )).map(_ ⇒ c)
+    }
+
+    Logger.info(s"[createCheckoutSession] start")
+    for {
+      json ← request.body.asJson.map(_.validate[CustomerInfo]) match {
+        case None ⇒
+          val ex = new IllegalArgumentException("Need request body.")
+          Logger.error(ex.getLocalizedMessage)
+          Future.failed(ex)
+        case Some(j) ⇒
+          Logger.info(s"[createCheckoutSession] received json: ${j.toString}")
+          Future.successful(j)
+      }
+      customerInfo ← json match {
+        case e @ JsError(_) ⇒
+          val ex = new IllegalArgumentException(s"Json Parse error. ${e.toString}")
+          Logger.error(ex.getLocalizedMessage)
+          Future.failed(ex)
+        case JsSuccess(parsed, _) ⇒
+          Logger.info(s"[createCheckoutSession] received param: $parsed")
+          Future.successful(parsed)
+      }
+      customer ← {
+        val action = for {
+          row ← CustomerDAO.findByEmail(customerInfo.email)
+          c ← row match {
+            case None    ⇒ make(customerInfo)
+            case Some(r) ⇒ retrieve(r)
+          }
+        } yield c
+        dbConfig.db.run(action.transactionally) // TODO: recoverしてEitherかTryで例外を捕捉するべき
+      }
+      r ← Future.successful {
+        val builder = new SessionCreateParams.Builder
+        builder.setSuccessUrl(s"$baseUrl/assets/checkout/success.html")
+          .setCancelUrl(s"$baseUrl/assets/checkout/canceled.html")
+          .addPaymentMethodType(PaymentMethodType.CARD)
+          .setCustomer(customer.getId)
+
+        val planBuild = new SubscriptionData.Item.Builder()
+          .setPlan(customerInfo.plan)
+          .build
+        val subscriptionData = new SubscriptionData.Builder()
+          .addItem(planBuild)
+          .build
+        builder.setSubscriptionData(subscriptionData)
+
+        val createParams = builder.build
+        val session = Session.create(createParams)
+        Logger.info(s"[createCheckoutSession] created session: $session")
+        Ok(Json.toJson(models.Session(session.getId)))
+      }
+    } yield r
   }
 }

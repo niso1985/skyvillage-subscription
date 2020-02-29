@@ -21,7 +21,7 @@ object CustomerDAO {
   }
 
   case class Row(
-      id:        Int,
+      id:        Int       = 0,
       email:     String,
       stripeId:  String,
       userName:  String,
@@ -39,9 +39,9 @@ object CustomerDAO {
     val email = column[String]("email", O.Length(256), O.Unique)
     val stripeId = column[String]("stripe_id", O.Length(256), O.Unique)
     val userName = column[String]("user_name", O.Length(256))
-    val isDeleted = column[Boolean]("IS_DELETED")
-    val createTs = column[Timestamp]("CREATE_TS")
-    val updateTs = column[Timestamp]("UPDATE_TS")
+    val isDeleted = column[Boolean]("is_deleted")
+    val createTs = column[Timestamp]("create_ts")
+    val updateTs = column[Timestamp]("update_ts")
 
     def * = (
       id,
