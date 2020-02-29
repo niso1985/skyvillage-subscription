@@ -8,9 +8,6 @@ create table c_customer
     user_name varchar(256) not null
 );
 
-alter table c_customer
-    owner to postgres;
-
 create unique index c_customer_email_uindex
     on c_customer (email);
 
