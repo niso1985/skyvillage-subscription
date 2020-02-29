@@ -4,11 +4,10 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.10"
 
 libraryDependencies ++= Seq(
   jdbc,
-  cache,
   guice,
   "com.stripe" % "stripe-java" % "10.0.2",
   "com.typesafe" % "config" % "1.4.0",
@@ -17,5 +16,3 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.2",
   ws
 )
-
-libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _ )
