@@ -1,22 +1,19 @@
 // Create a Checkout Session with the selected plan ID
 var createCheckoutSession = function (name_, email_, village_, plan_) {
-    return
-    try {
-        fetch("/create-checkout-session", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: name_,
-                email: email_,
-                village: village_,
-                plan: plan_
-            })
-        }).then(handleResult);
-    } catch (e) {
-        alert("エラーが発生しました。 エラー:" + e.message)
-    }
+    return fetch("/create-checkout-session", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: name_,
+            email: email_,
+            village: village_,
+            plan: plan_
+        })
+    }).catch((e) => {
+        alert("リクエスト中にエラーが発生しました。: " + e.message)
+    }).then(handleResult);
 };
 
 // Handle any errors returned from Checkout
