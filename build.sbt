@@ -9,10 +9,12 @@ scalaVersion := "2.11.7"
 libraryDependencies ++= Seq(
   jdbc,
   cache,
+  guice,
   "com.stripe" % "stripe-java" % "10.0.2",
   "com.typesafe" % "config" % "1.4.0",
   "org.postgresql" % "postgresql" % "42.2.10",
-  "org.flywaydb" %% "flyway-play" % "3.2.0",
+  "org.flywaydb" %% "flyway-play" % "4.0.0",
+  "com.typesafe.play" %% "play-slick" % "3.0.2",
   ws
 )
 

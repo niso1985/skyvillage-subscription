@@ -14,10 +14,12 @@ import play.api.mvc._
 import java.time.{ LocalDate, LocalDateTime, ZoneId, ZoneOffset }
 import java.time.temporal.TemporalAdjusters
 
+import javax.inject.Inject
+
 import scala.util.control.Exception._
 import scala.util.{ Failure, Success }
 
-object Application extends Controller {
+class Application @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
   val config: Config = ConfigFactory.load()
   val pubkey = config.getString("stripe.pubkey")
   val plan1 = config.getString("stripe.plan1")
@@ -41,6 +43,7 @@ object Application extends Controller {
           case e @ JsError(_) ⇒ throw new IllegalArgumentException(s"Json Parse error. ${e.toString}")
           case JsSuccess(customerInfo, _) ⇒
             Logger.info(s"[createCheckoutSession] received param: $customerInfo")
+            // ここで、メールアドレスでチェックして、存在していたらstripe_idからretrieveする
             val cbuilder = new CustomerCreateParams.Builder
             val cparam = cbuilder.setName(customerInfo.name)
               .setDescription(s"参加希望VILLAGE: ${customerInfo.village}")
