@@ -7,19 +7,20 @@ import com.stripe.param.CustomerCreateParams
 import com.stripe.param.checkout.SessionCreateParams
 import com.stripe.param.checkout.SessionCreateParams.{ PaymentMethodType, SubscriptionData }
 import com.typesafe.config._
+import dao.CustomerDAO
 import models.{ CustomerInfo, ErrorResponse, StripeInfo }
 import play.Logger
 import play.api.libs.json.{ JsError, JsSuccess, Json }
 import play.api.mvc._
-import java.time.{ LocalDate, LocalDateTime, ZoneId, ZoneOffset }
-import java.time.temporal.TemporalAdjusters
-
 import javax.inject.Inject
+import play.api.db.slick.DatabaseConfigProvider
+import slick.jdbc.JdbcProfile
 
 import scala.util.control.Exception._
 import scala.util.{ Failure, Success }
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class Application @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
+class Application @Inject() (cc: ControllerComponents, dp: DatabaseConfigProvider) extends AbstractController(cc) {
   val config: Config = ConfigFactory.load()
   val pubkey = config.getString("stripe.pubkey")
   val plan1 = config.getString("stripe.plan1")
@@ -27,6 +28,8 @@ class Application @Inject() (cc: ControllerComponents) extends AbstractControlle
   val baseUrl = config.getString("baseurl")
 
   Stripe.apiKey = config.getString("stripe.secretkey")
+
+  val dbConfig = dp.get[JdbcProfile]
 
   def setup = Action {
     val info = StripeInfo(pubkey, plan1, plan2)
@@ -42,8 +45,19 @@ class Application @Inject() (cc: ControllerComponents) extends AbstractControlle
         json match {
           case e @ JsError(_) ⇒ throw new IllegalArgumentException(s"Json Parse error. ${e.toString}")
           case JsSuccess(customerInfo, _) ⇒
+            def retrieve: Customer = {
+              ???
+            }
+            def make: Customer = {
+              ???
+            }
             Logger.info(s"[createCheckoutSession] received param: $customerInfo")
             // ここで、メールアドレスでチェックして、存在していたらstripe_idからretrieveする
+            val a = dbConfig.db.run(CustomerDAO.findByEmail(customerInfo.email)).map { row ⇒
+              if (row.isDefined) retrieve
+              else make
+            }
+
             val cbuilder = new CustomerCreateParams.Builder
             val cparam = cbuilder.setName(customerInfo.name)
               .setDescription(s"参加希望VILLAGE: ${customerInfo.village}")
@@ -69,7 +83,6 @@ class Application @Inject() (cc: ControllerComponents) extends AbstractControlle
             val createParams = builder.build
             val session = Session.create(createParams)
             Logger.info(s"[createCheckoutSession] created session: $session")
-
             Ok(Json.toJson(models.Session(session.getId)))
         }
     }) match {
