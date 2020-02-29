@@ -3,7 +3,7 @@ package controllers
 import com.stripe.Stripe
 import com.stripe.model.Customer
 import com.stripe.model.checkout.Session
-import com.stripe.param.CustomerCreateParams
+import com.stripe.param.{ CustomerCreateParams, CustomerUpdateParams }
 import com.stripe.param.checkout.SessionCreateParams
 import com.stripe.param.checkout.SessionCreateParams.{ PaymentMethodType, SubscriptionData }
 import com.typesafe.config._
@@ -41,9 +41,13 @@ class Application @Inject() (cc: ControllerComponents, dp: DatabaseConfigProvide
 
   def createCheckoutSession = Action.async { implicit request: Request[AnyContent] ⇒
     import CustomerDAO.JdbcProfile.api._
-    def retrieve(row: CustomerDAO.Row): DBIO[Customer] = {
-      val c = Customer.retrieve(row.stripeId)
-      Logger.info(s"[createCheckoutSession] retrieve customer: $c")
+    def update(row: CustomerDAO.Row, customerInfo: CustomerInfo): DBIO[Customer] = {
+      val ubuilder = new CustomerUpdateParams.Builder
+      val u = ubuilder.setName(customerInfo.name)
+        .setDescription(s"参加希望VILLAGE: ${customerInfo.village}")
+        .build()
+      val c = Customer.retrieve(row.stripeId).update(u)
+      Logger.info(s"[createCheckoutSession] retrieve and update customer: $c")
       DBIO.successful(c)
     }
     def make(customerInfo: CustomerInfo): DBIO[Customer] = {
@@ -86,7 +90,7 @@ class Application @Inject() (cc: ControllerComponents, dp: DatabaseConfigProvide
           row ← CustomerDAO.findByEmail(customerInfo.email)
           c ← row match {
             case None    ⇒ make(customerInfo)
-            case Some(r) ⇒ retrieve(r)
+            case Some(r) ⇒ update(r, customerInfo)
           }
         } yield c
         dbConfig.db.run(action.transactionally) // TODO: recoverしてEitherかTryで例外を捕捉するべき
