@@ -11,6 +11,8 @@ libraryDependencies ++= Seq(
   cache,
   "com.stripe" % "stripe-java" % "10.0.2",
   "com.typesafe" % "config" % "1.4.0",
+  "org.postgresql" % "postgresql" % "42.2.10",
+  "org.flywaydb" %% "flyway-play" % "3.2.0",
   ws
 )
 
